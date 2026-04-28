@@ -1,0 +1,82 @@
+/**
+ * 도구 프로필 — 클라이언트별 도구 노출 제어
+ *
+ * lite:  체인 중심 14개 (Claude 웹 등 컨텍스트 제한 클라이언트용)
+ * full:  87개 전체 (Claude Code, STDIO 등 파워 클라이언트용)
+ */
+
+import type { McpTool } from "./types.js"
+
+export type ToolProfile = "lite" | "full"
+
+/**
+ * lite 프로필에 노출할 도구 목록
+ * - 체인 8개: 내부에서 하위 도구를 직접 호출하므로 기능 손실 없음
+ * - 핵심 직접 도구 4개: 체인으로 커버 안 되는 단순 조회용
+ * - 메타 도구 2개: discover_tools + execute_tool (특수 도구 접근용)
+ */
+const LITE_TOOLS = new Set([
+  // 체인 도구 — 80%+ 유스케이스 커버
+  "chain_full_research",
+  "chain_law_system",
+  "chain_action_basis",
+  "chain_dispute_prep",
+  "chain_amendment_track",
+  "chain_ordinance_compare",
+  "chain_procedure_detail",
+  "chain_document_review",
+  // 핵심 직접 도구 — 단순 조회
+  "search_law",
+  "get_law_text",
+  "search_precedents",
+  "get_precedent_text",
+  // 메타 도구 — 나머지 73개 접근용
+  "discover_tools",
+  "execute_tool",
+])
+
+/** 도구 카테고리 매핑 (discover_tools용) */
+export const TOOL_CATEGORIES: Record<string, string[]> = {
+  "법령검색": ["search_law", "search_all", "advanced_search", "suggest_law_names", "search_ai_law"],
+  "법령조회": ["get_law_text", "get_article_detail", "get_batch_articles", "get_article_with_precedents"],
+  "행정규칙": ["search_admin_rule", "get_admin_rule", "compare_admin_rule_old_new"],
+  "자치법규": ["search_ordinance", "get_ordinance"],
+  "법령연계": ["get_linked_ordinances", "get_linked_ordinance_articles", "get_delegated_laws", "get_linked_laws_from_ordinance"],
+  "비교분석": ["compare_old_new", "get_three_tier", "compare_articles"],
+  "별표서식": ["get_annexes"],
+  "법체계": ["get_law_tree", "get_law_system_tree"],
+  "통계링크": ["get_law_statistics", "get_external_links", "parse_article_links"],
+  "이력": ["get_article_history", "get_law_history", "get_historical_law", "search_historical_law"],
+  "판례": ["search_precedents", "get_precedent_text", "summarize_precedent", "extract_precedent_keywords", "find_similar_precedents"],
+  "해석례": ["search_interpretations", "get_interpretation_text"],
+  "조세심판": ["search_tax_tribunal_decisions", "get_tax_tribunal_decision_text"],
+  "관세": ["search_customs_interpretations", "get_customs_interpretation_text"],
+  "헌재": ["search_constitutional_decisions", "get_constitutional_decision_text"],
+  "행정심판": ["search_admin_appeals", "get_admin_appeal_text"],
+  "공정위": ["search_ftc_decisions", "get_ftc_decision_text"],
+  "개인정보위": ["search_pipc_decisions", "get_pipc_decision_text"],
+  "노동위": ["search_nlrc_decisions", "get_nlrc_decision_text"],
+  "권익위": ["search_acr_decisions", "get_acr_decision_text"],
+  "소청심사": ["search_appeal_review_decisions", "get_appeal_review_decision_text"],
+  "권익위심판": ["search_acr_special_appeals", "get_acr_special_appeal_text"],
+  "학칙": ["search_school_rules", "get_school_rule_text"],
+  "공사공단": ["search_public_corp_rules", "get_public_corp_rule_text"],
+  "공공기관": ["search_public_institution_rules", "get_public_institution_rule_text"],
+  "조약": ["search_treaties", "get_treaty_text"],
+  "영문법령": ["search_english_law", "get_english_law_text"],
+  "용어": ["search_legal_terms", "get_legal_term_kb", "get_legal_term_detail", "get_daily_term", "get_daily_to_legal", "get_legal_to_daily", "get_term_articles", "get_related_laws"],
+  "문서분석": ["analyze_document"],
+  "유틸리티": ["parse_jo_code", "get_law_abbreviations"],
+}
+
+/** 프로필 파싱 (잘못된 값이면 full) */
+export function parseProfile(value: string | undefined): ToolProfile {
+  if (value === "lite") return "lite"
+  return "full"
+}
+
+/** 프로필에 맞는 도구 필터링 */
+export function filterToolsByProfile(tools: McpTool[], profile: ToolProfile): McpTool[] {
+  if (profile === "full") return tools
+  return tools.filter(t => LITE_TOOLS.has(t.name))
+}

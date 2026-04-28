@@ -1,0 +1,9 @@
+node_modules/
+build/
+.env
+.env.local
+.vercel/
+*.log
+test-results*.txt
+.claude/
+test-results-final.txt

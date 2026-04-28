@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: korean-law-mcp
+    env: docker
+    region: singapore
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: LAW_OC
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: RATE_LIMIT_RPM
+        value: "300"

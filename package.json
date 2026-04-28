@@ -1,0 +1,78 @@
+{
+  "name": "korean-law-mcp-vercel",
+  "version": "3.2.2",
+  "description": "법제처 41개 API → 15개 MCP 도구 (Vercel 서버리스 배포)",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
+    },
+    "./lib/*": {
+      "types": "./build/lib/*.d.ts",
+      "import": "./build/lib/*.js"
+    },
+    "./tools/*": {
+      "types": "./build/tools/*.d.ts",
+      "import": "./build/tools/*.js"
+    },
+    "./server/*": {
+      "types": "./build/server/*.d.ts",
+      "import": "./build/server/*.js"
+    }
+  },
+  "bin": {
+    "korean-law-mcp": "build/index.js",
+    "korean-law": "build/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node build/index.js",
+    "cli": "node build/cli.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "korean-law",
+    "법령",
+    "판례",
+    "법제처",
+    "claude",
+    "model-context-protocol",
+    "legal-ai",
+    "cli"
+  ],
+  "author": "Chris",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@xmldom/xmldom": "^0.9.8",
+    "commander": "^14.0.3",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "kordoc": "^2.2.5",
+    "pdfjs-dist": "^5.5.207",
+    "zod": "^3.25.76 || ^4.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.19.3",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kimjonghyeok62/korean-law-mcp-vercel.git"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
