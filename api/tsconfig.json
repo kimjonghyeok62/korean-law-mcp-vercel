@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "outDir": "../build/api",
+    "noEmit": true
+  },
+  "include": ["../api/**/*", "../src/**/*"]
+}
