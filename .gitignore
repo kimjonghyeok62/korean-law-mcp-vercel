@@ -7,3 +7,7 @@ build/
 test-results*.txt
 .claude/
 test-results-final.txt
+
+.vercel
+api/*.js
+api/*.d.ts
